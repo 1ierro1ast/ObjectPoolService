@@ -32,6 +32,7 @@ namespace Codebase.Core.DemoGameplay
 
             _button.interactable = false;
         }
+        
     }
 
     public enum TriggerType
