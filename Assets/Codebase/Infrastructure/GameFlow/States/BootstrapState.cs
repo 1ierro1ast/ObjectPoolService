@@ -1,5 +1,6 @@
 ﻿using Codebase.Core.Ads;
 using Codebase.Core.Analytics;
+using Codebase.Infrastructure.GameFlow.EventBusSystem;
 using Codebase.Infrastructure.Services;
 using Codebase.Infrastructure.Services.AssetManagement;
 using Codebase.Infrastructure.Services.DataStorage;
@@ -64,7 +65,7 @@ namespace Codebase.Infrastructure.GameFlow.States
         {
             GameSettings gameSettings = _services.Single<IAssetProvider>()
                 .GetScriptableObject<GameSettings>(AssetPath.GameSettingsPath);
-            _services.RegisterSingle<IGameSettings>(gameSettings);
+            _services.RegisterSingle(gameSettings);
         }
 
         private void RegisterAdsModule()
@@ -104,7 +105,8 @@ namespace Codebase.Infrastructure.GameFlow.States
         private void RegisterLevelFactory()
         {
             _services.RegisterSingle<ILevelFactory>(
-                new LevelFactory(_services.Single<IAssetProvider>(), _services.Single<IGameVariables>(),
+                new LevelFactory(_services.Single<IAssetProvider>(), 
+                    _services.Single<IGameVariables>(),
                     _services.Single<ITemporaryLevelVariables>()));
         }
 

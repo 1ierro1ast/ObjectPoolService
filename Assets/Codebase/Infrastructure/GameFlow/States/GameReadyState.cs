@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using Codebase.Core.UI;
 using Codebase.Core.UI.Popups;
+using Codebase.Infrastructure.GameFlow.EventBusSystem;
+using Codebase.Infrastructure.GameFlow.Events;
 using Codebase.Infrastructure.Services.DataStorage;
 using Codebase.Infrastructure.Services.Factories;
 using Codebase.Infrastructure.StateMachine;
@@ -37,13 +39,14 @@ namespace Codebase.Infrastructure.GameFlow.States
 
         public void Enter()
         {
+            _loadingCurtain.OpenPopup();
             _temporaryLevelVariables.ClearData();
             
             _startPopup = _uiFactory.GetStartPopup();
             _startPopup.OpenPopup();
             _startPopup.StartButtonClickEvent += StartPopup_OnStartButtonClickEvent;
             
-            _eventBus.BroadcastLevelLoaded();
+            _eventBus.Fire<LevelLoaded>();
             _coroutineRunner.StartCoroutine(CloseCurtainCoroutine());
         }
 
@@ -55,7 +58,6 @@ namespace Codebase.Infrastructure.GameFlow.States
 
         private void StartPopup_OnStartButtonClickEvent()
         {
-            _loadingCurtain.OpenPopup();
             _coroutineRunner.StartCoroutine(GoToGameCoroutine());
         }
 

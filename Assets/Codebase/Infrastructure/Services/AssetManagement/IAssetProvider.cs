@@ -24,6 +24,6 @@ namespace Codebase.Infrastructure.Services.AssetManagement
         T[] GetAllObjects<T>(string path) where T : Object;
         T GetScriptableObject<T>(string path) where T : ScriptableObject;
         T[] GetAllScriptableObjects<T>(string path) where T : ScriptableObject;
-        int GetAssetsAmount(string path);
+        int GetAssetAmount(string path);
     }
 }

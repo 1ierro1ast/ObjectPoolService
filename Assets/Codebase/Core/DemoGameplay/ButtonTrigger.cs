@@ -1,4 +1,6 @@
 ﻿using Codebase.Infrastructure.GameFlow;
+using Codebase.Infrastructure.GameFlow.EventBusSystem;
+using Codebase.Infrastructure.GameFlow.Events;
 using Codebase.Infrastructure.Services;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,16 +25,15 @@ namespace Codebase.Core.DemoGameplay
             switch (_triggerType)
             {
                 case TriggerType.Win:
-                    _eventBus.BroadcastPlayerWin();
+                    _eventBus.Fire<PlayerWin>();
                     break;
                 case TriggerType.Lose:
-                    _eventBus.BroadcastPlayerLose();
+                    _eventBus.Fire<PlayerLose>();
                     break;
             }
 
             _button.interactable = false;
         }
-        
     }
 
     public enum TriggerType

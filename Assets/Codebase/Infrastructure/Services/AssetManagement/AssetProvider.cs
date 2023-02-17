@@ -80,17 +80,17 @@ namespace Codebase.Infrastructure.Services.AssetManagement
             return Resources.LoadAll<T>(path);
         }
 
-        public T[] GetAllScriptableObjects<T>(string path) where T : ScriptableObject
-        {
-            return Resources.LoadAll<T>(path);
-        }
-
         public T GetScriptableObject<T>(string path) where T : ScriptableObject
         {
             return Resources.Load<T>(path);
         }
 
-        public int GetAssetsAmount(string path)
+        public T[] GetAllScriptableObjects<T>(string path) where T : ScriptableObject
+        {
+            return Resources.LoadAll<T>(path);
+        }
+
+        public int GetAssetAmount(string path)
         {
             var amount = Resources.LoadAll<GameObject>(path).Length;
             return amount;

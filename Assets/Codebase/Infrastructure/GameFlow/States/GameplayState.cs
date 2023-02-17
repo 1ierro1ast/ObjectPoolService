@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using Codebase.Core.UI;
 using Codebase.Core.UI.Popups;
+using Codebase.Infrastructure.GameFlow.EventBusSystem;
+using Codebase.Infrastructure.GameFlow.Events;
 using Codebase.Infrastructure.Services.DataStorage;
 using Codebase.Infrastructure.Services.Factories;
 using Codebase.Infrastructure.StateMachine;
@@ -34,32 +36,31 @@ namespace Codebase.Infrastructure.GameFlow.States
 
         public void Exit()
         {
-            _eventBus.PlayerWinEvent -= EventBus_OnPlayerWinEvent;
-            _eventBus.PlayerLoseEvent -= EventBus_OnPlayerLoseEvent;
+            _eventBus.Unsubscribe<PlayerWin>(OnPlayerWin);
+            _eventBus.Unsubscribe<PlayerLose>(OnPlayerLose);
         }
 
         public void Enter()
         {
             _temporaryLevelVariables.IsWin = false;
-            _loadingCurtain.ClosePopup();
             _overlayPopup = _uiFactory.GetOverlayPopup();
             _overlayPopup.OpenPopup();
 
-            _eventBus.BroadcastGamePlayStart();
+            _eventBus.Fire<GameplayStarted>();
 
-            _eventBus.PlayerWinEvent += EventBus_OnPlayerWinEvent;
-            _eventBus.PlayerLoseEvent += EventBus_OnPlayerLoseEvent;
+            _eventBus.Subscribe<PlayerWin>(OnPlayerWin);
+            _eventBus.Subscribe<PlayerLose>(OnPlayerLose);
         }
 
-        private void EventBus_OnPlayerLoseEvent()
+        private void OnPlayerLose()
         {
-            _eventBus.BroadcastLevelFinished();
+            _eventBus.Fire<LevelFinished>();
             _coroutineRunner.StartCoroutine(LoseCoroutine());
         }
 
-        private void EventBus_OnPlayerWinEvent()
+        private void OnPlayerWin()
         {
-            _eventBus.BroadcastLevelFinished();
+            _eventBus.Fire<LevelFinished>();
             _coroutineRunner.StartCoroutine(WinCoroutine());
         }
 
