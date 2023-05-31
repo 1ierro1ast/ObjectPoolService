@@ -9,29 +9,25 @@ namespace Codebase.Infrastructure.Services.Pooling
     {
         private readonly Queue<T> _objects = new();
 
-        private readonly string _parentName;
         private readonly T _prefab;
         private readonly Action<T> _onCreateCallback;
         private readonly Action<T> _onGetCallback;
         private readonly Action<T> _onReleaseCallback;
         private readonly Action _onPoolInitializedCallback;
         private readonly int _size;
-        private readonly int _maxPoolSize;
         private Transform _parent;
 
         public ObjectPool(string parentName, T prefab, Action<T> onCreateCallback = null,
             Action<T> onGetCallback = null, Action<T> onReleaseCallback = null, Action onPoolInitializedCallback = null,
-            int size = 100, int maxPoolSize = 10000)
+            int size = 100)
         {
-            _parentName = parentName;
             _prefab = prefab;
             _onCreateCallback = onCreateCallback;
             _onGetCallback = onGetCallback;
             _onReleaseCallback = onReleaseCallback;
             _onPoolInitializedCallback = onPoolInitializedCallback;
             _size = size;
-            _maxPoolSize = maxPoolSize;
-            CreateParent(_parentName);
+            CreateParent(parentName);
             InitializePool();
         }
 
@@ -58,10 +54,12 @@ namespace Codebase.Infrastructure.Services.Pooling
             if (rotation == default) rotation = Quaternion.identity;
 
             var pooledObject = _objects.Count > 0 ? _objects.Dequeue() : InstantiateObject();
-
-            pooledObject.transform.position = position;
-            pooledObject.transform.rotation = rotation;
-            pooledObject.transform.SetParent(parent);
+            var transform = pooledObject.transform;
+            
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.SetParent(parent);
+            
             pooledObject.gameObject.SetActive(true);
             OnGetCallback(pooledObject);
 
@@ -92,18 +90,18 @@ namespace Codebase.Infrastructure.Services.Pooling
 
         private void OnGetCallback(T givenObject)
         {
-            (givenObject as IPoolableObject<T>).Construct(this);
+            (givenObject as IPoolableObject<T>)?.Construct(this);
 
             _onGetCallback?.Invoke(givenObject);
 
-            (givenObject as IGetPooledObjectHandler).OnGet();
+            (givenObject as IGetPooledObjectHandler)?.OnGet();
         }
 
         private void OnReleaseCallback(T releasedObject)
         {
             _onReleaseCallback?.Invoke(releasedObject);
 
-            (releasedObject as IReleasePooledObjectHandler).OnRelease();
+            (releasedObject as IReleasePooledObjectHandler)?.OnRelease();
         }
 
         public void Clean()

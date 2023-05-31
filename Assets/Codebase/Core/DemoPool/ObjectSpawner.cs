@@ -11,7 +11,7 @@ namespace Codebase.Core.PoolTesting
         private void Awake()
         {
             _objectsPool = new ObjectPool<TestPoolableObject>("TestPool", _prefab, OnCreateCallback, OnGetCallback,
-                OnReleaseCallback, OnPoolInitializedCallback,10, 100);
+                OnReleaseCallback, OnPoolInitializedCallback,10);
         }
 
         private void OnPoolInitializedCallback()
